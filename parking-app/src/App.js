@@ -5,11 +5,11 @@ import React, { useState, useEffect } from "react";
 import { Table, Button } from "reactstrap";
 
 function App() {
-  
-  const [garage,setGarage] = useState([])
+  const [garage, setGarage] = useState([]);
+
   useEffect(() => {
     const cars = JSON.parse(localStorage.getItem("carDetails"));
-    setGarage(cars)
+    setGarage(cars);
     if (!cars) {
       localStorage.setItem("carDetails", JSON.stringify([]));
     }
@@ -28,12 +28,11 @@ function App() {
   const checkOut = (regNumber) => {
     let cars = JSON.parse(localStorage.getItem("carDetails"));
     let carToCheckout = cars.find((car) => car.regNumber === regNumber);
-    carToCheckout.checkOut = checkoutTime
-    const otherCars = cars.filter(car=>car.regNumber !== regNumber)
-    const updatedCars = [carToCheckout,...otherCars]
-    localStorage.setItem('carDetails',JSON.stringify(updatedCars))
-    setGarage(updatedCars)
-   
+    carToCheckout.checkOut = checkoutTime;
+    const otherCars = cars.filter((car) => car.regNumber !== regNumber);
+    const updatedCars = [carToCheckout, ...otherCars];
+    localStorage.setItem("carDetails", JSON.stringify(updatedCars));
+    setGarage(updatedCars);
   };
 
   const toggleFormula = () => {
@@ -42,8 +41,8 @@ function App() {
 
   return (
     <div className="App">
-      <Button color="primary" onClick={handleButton}>
-        Add Car
+      <Button color="primary" onClick={handleButton} className="add-btn">
+        Add New Car
       </Button>
       <Table dark>
         <thead>
@@ -64,11 +63,18 @@ function App() {
               <td>{car.parkingLot}</td>
               <td>{car.checkIn}</td>
               <td>
-              { car.checkOut ? car.checkOut : <Button color="danger" onClick={() => checkOut(car.regNumber)}>
-                  Check Out
-                </Button>}
+                {car.checkOut ? (
+                  car.checkOut
+                ) : (
+                  <Button
+                    color="danger"
+                    onClick={() => checkOut(car.regNumber)}
+                  >
+                    Check Out
+                  </Button>
+                )}
               </td>
-              <td>{car.checkIn}</td>
+              <td>{Math.abs(car.checkIn - car.checkOut) * 2}</td>
             </tr>
           ))}
         </tbody>
@@ -81,7 +87,11 @@ function App() {
           destroyOnClose={true}
           onCancel={handleEnd}
         >
-          <AddCar toggleFormula={toggleFormula} setGarage={setGarage}/>
+          <AddCar
+            toggleFormula={toggleFormula}
+            handleEnd={handleEnd}
+            setGarage={setGarage}
+          />
         </Modal>
       </div>
     </div>
