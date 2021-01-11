@@ -1,9 +1,16 @@
 import "./App.css";
-import { Table, Button, Modal } from "antd";
+import { Button, Modal } from "antd";
 import AddCar from "./AddCar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Table } from "reactstrap";
 
 function App() {
+  useEffect(() => {
+    const cars = JSON.parse(localStorage.getItem("carDetails"));
+    if (!cars) {
+      localStorage.setItem("carDetails", JSON.stringify([]));
+    }
+  }, []);
   const [show, setShow] = useState(false);
 
   const handleButton = () => {
@@ -18,66 +25,37 @@ function App() {
     setShow(!show);
   };
 
-  const dataSource = [
-    {
-      key: "1",
-      phone: "Mike",
-      car: 32,
-      parkingSpace: "10 Downing Street",
-      checkedIn: "10 Downing Street",
-      checkedOut: "10 Downing Street",
-      fees: "500",
-    },
-    {
-      key: "2",
-      phone: "Mike",
-      car: 32,
-      parkingSpace: "10 Downing Street",
-      checkedIn: "10 Downing Street",
-      checkedOut: "10 Downing Street",
-      fees: "500",
-    },
-  ];
-
-  const columns = [
-    {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
-      title: "Car",
-      dataIndex: "car",
-      key: "car",
-    },
-    {
-      title: "Parking space",
-      dataIndex: "parkingSpace",
-      key: "parkingSpace",
-    },
-    {
-      title: "Checked In",
-      dataIndex: "checkedIn",
-      key: "checkedIn",
-    },
-    {
-      title: "Checked Out",
-      dataIndex: "checkedOut",
-      key: "checkedOut",
-    },
-    {
-      title: "Fees",
-      dataIndex: "fees",
-      key: "fees",
-    },
-  ];
+  console.log(`HELLO`, JSON.parse(localStorage.getItem("carDetails")));
 
   return (
     <div className="App">
       <Button type="primary" onClick={handleButton}>
         Button
       </Button>
-      <Table columns={columns} dataSource={dataSource} />
+      <Table dark>
+        <thead>
+          <tr>
+            <th>Phone Number</th>
+            <th>Car</th>
+            <th>Parking Space</th>
+            <th>Checked In</th>
+            <th>Checked Out</th>
+            <th>Fees</th>
+          </tr>
+        </thead>
+        <tbody>
+          {JSON.parse(localStorage.getItem("carDetails")).map((car) => (
+            <tr key={car.id}>
+              <th scope="row">{car.phoneNumber}</th>
+              <td>{car.regNumber}</td>
+              <td>{car.parkingLot}</td>
+              <td>{car.checkIn}</td>
+              {/* <td>{car.checkIn}</td>
+              <td>{car.checkIn}</td> */}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
       <div>
         <Modal
           title="Add a new car"
@@ -89,7 +67,6 @@ function App() {
           <AddCar toggleFormula={toggleFormula} />
         </Modal>
       </div>
-      ;
     </div>
   );
 }

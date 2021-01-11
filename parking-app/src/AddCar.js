@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { array } from "yup/lib/locale";
 
 const AddCar = (props) => {
+  var checkIn = new Date().toLocaleTimeString();
+  
   const formik = useFormik({
     initialValues: {
       regNumber: "",
@@ -10,8 +13,10 @@ const AddCar = (props) => {
       phoneNumber: "",
     },
     onSubmit: (values, tools) => {
-      console.log(`HHY`, values);
-      localStorage.setItem("carDetails", JSON.stringify(values));
+      const fetchedCars = JSON.parse(localStorage.getItem("carDetails"));
+      const newCarDetails = [...fetchedCars, { ...values, checkIn }];
+      localStorage.setItem("carDetails", JSON.stringify(newCarDetails));
+      tools.resetForm();
     },
     validationSchema: Yup.object().shape({
       regNumber: Yup.string().required("Registration Number"),
