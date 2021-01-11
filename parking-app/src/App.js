@@ -27,22 +27,20 @@ function App() {
   }
   let checkout = new Date().toLocaleString();
   let checkedIn = new Date().toLocaleString();
-  // let checkoutTime = checkout.toLocaleTimeString();
 
   const timeFormatter = (start, end) => {
-    console.log(end,start)
     const startTime = Date.parse(start);
     const endTime = Date.parse(end);
     const diff = (endTime - startTime) / 3600000;
-    console.log(startTime, endTime, diff);
-    return Math.round(diff * 2) ;
+
+    return Math.round(diff * 2);
   };
-  const checkOut = (regNumber,end,start) => {
-    console.log(regNumber,end,start)
+  const checkOut = (regNumber, start) => {
+    console.log(regNumber, start);
     let cars = JSON.parse(localStorage.getItem("carDetails"));
     let carToCheckout = cars.find((car) => car.regNumber === regNumber);
     carToCheckout.checkOut = checkout;
-    // carToCheckout.fee = timeFormatter(start,end)
+    carToCheckout.fee = timeFormatter(start, checkout);
     const otherCars = cars.filter((car) => car.regNumber !== regNumber);
     const updatedCars = [carToCheckout, ...otherCars];
     localStorage.setItem("carDetails", JSON.stringify(updatedCars));
@@ -106,14 +104,15 @@ function App() {
                 ) : (
                   <Button
                     color="danger"
-                    onClick={() => checkOut(car.regNumber,)}
+                    onClick={() => checkOut(car.regNumber, car.checkedIn)}
                   >
                     Check Out
                   </Button>
                 )}
               </td>
               <td>
-                {car.checkOut ? timeFormatter(car.checkedIn,car.checkOut)
+                {car.checkOut
+                  ? timeFormatter(car.checkedIn, car.checkOut)
                   : "Not yet calculated"}
               </td>
             </tr>
