@@ -1,57 +1,68 @@
-import { Form, Input, Button, Checkbox, Modal } from "antd";
-import React, { useState } from "react";
-
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
-};
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-};
+import React from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const AddCar = (props) => {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
-  };
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
-  };
+  const formik = useFormik({
+    initialValues: {
+      regNumber: "",
+      parkingLot: "",
+      phoneNumber: "",
+    },
+    onSubmit: (values, tools) => {
+      console.log(`HHY`, values);
+      localStorage.setItem("carDetails", JSON.stringify(values));
+    },
+    validationSchema: Yup.object().shape({
+      regNumber: Yup.string().required("Registration Number"),
+      parkingLot: Yup.string().required("Parking Lot Number"),
+      phoneNumber: Yup.string().required("Please enter user phone number"),
+    }),
+  });
 
   return (
-    <Form
-      {...layout}
-      name="basic"
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-    >
-      <Form.Item
-        label="Username"
-        name="username"
-        rules={[{ required: true, message: "Please input your username!" }]}
-      >
-        <Input />
-      </Form.Item>
+    <div className="form-container sign-up-container">
+      <form onSubmit={formik.handleSubmit}>
+        <h1>Add Car</h1>
 
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[{ required: true, message: "Please input your password!" }]}
-      >
-        <Input.Password />
-      </Form.Item>
+        <input
+          type="text"
+          placeholder="Registration Number"
+          name="regNumber"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.regNumber}
+        />
+        {formik.touched.regNumber && formik.errors.regNumber ? (
+          <span className="error-message">{formik.errors.regNumber}</span>
+        ) : null}
 
-      <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-        <Checkbox>Remember me</Checkbox>
-      </Form.Item>
+        <input
+          type="text"
+          placeholder="Parking Lot Number"
+          name="parkingLot"
+          onChange={formik.handleChange}
+          onBlur={formik.parkingLot}
+          value={formik.values.parkingLot}
+        />
 
-      <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+        {formik.touched.parkingLot && formik.errors.parkingLot ? (
+          <span className="error-message">{formik.errors.parkingLot}</span>
+        ) : null}
+        <input
+          type="text"
+          placeholder="User's phone number"
+          name="phoneNumber"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.phoneNumber}
+        />
+        {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+          <span className="error-message">{formik.errors.phoneNumber}</span>
+        ) : null}
+        <button type="submit">Add Car</button>
+      </form>
+    </div>
   );
 };
 export default AddCar;
