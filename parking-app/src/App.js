@@ -1,12 +1,15 @@
 import "./App.css";
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import AddCar from "./AddCar";
 import React, { useState, useEffect } from "react";
-import { Table } from "reactstrap";
+import { Table, Button } from "reactstrap";
 
 function App() {
+  
+  const [garage,setGarage] = useState([])
   useEffect(() => {
     const cars = JSON.parse(localStorage.getItem("carDetails"));
+    setGarage(cars)
     if (!cars) {
       localStorage.setItem("carDetails", JSON.stringify([]));
     }
@@ -21,16 +24,26 @@ function App() {
     setShow(false);
   }
 
+  let checkoutTime = new Date().toLocaleTimeString();
+  const checkOut = (regNumber) => {
+    let cars = JSON.parse(localStorage.getItem("carDetails"));
+    let carToCheckout = cars.find((car) => car.regNumber === regNumber);
+    carToCheckout.checkOut = checkoutTime
+    const otherCars = cars.filter(car=>car.regNumber !== regNumber)
+    const updatedCars = [carToCheckout,...otherCars]
+    localStorage.setItem('carDetails',JSON.stringify(updatedCars))
+    setGarage(updatedCars)
+   
+  };
+
   const toggleFormula = () => {
     setShow(!show);
   };
 
-  console.log(`HELLO`, JSON.parse(localStorage.getItem("carDetails")));
-
   return (
     <div className="App">
-      <Button type="primary" onClick={handleButton}>
-        Button
+      <Button color="primary" onClick={handleButton}>
+        Add Car
       </Button>
       <Table dark>
         <thead>
@@ -44,14 +57,18 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {JSON.parse(localStorage.getItem("carDetails")).map((car) => (
+          {garage?.map((car) => (
             <tr key={car.id}>
               <th scope="row">{car.phoneNumber}</th>
               <td>{car.regNumber}</td>
               <td>{car.parkingLot}</td>
               <td>{car.checkIn}</td>
-              {/* <td>{car.checkIn}</td>
-              <td>{car.checkIn}</td> */}
+              <td>
+              { car.checkOut ? car.checkOut : <Button color="danger" onClick={() => checkOut(car.regNumber)}>
+                  Check Out
+                </Button>}
+              </td>
+              <td>{car.checkIn}</td>
             </tr>
           ))}
         </tbody>
@@ -64,7 +81,7 @@ function App() {
           destroyOnClose={true}
           onCancel={handleEnd}
         >
-          <AddCar toggleFormula={toggleFormula} />
+          <AddCar toggleFormula={toggleFormula} setGarage={setGarage}/>
         </Modal>
       </div>
     </div>
