@@ -2,9 +2,11 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const AddCar = ({ setGarage, handleEnd }) => {
-  var checkIn = new Date().toLocaleTimeString();
-
+const AddCar = ({ setGarage, handleEnd,checkedIn }) => {
+//  const checkIn = checkedIn.toLocaleTimeString()
+// const timeFormatter = () =>{
+  
+// }
   const formik = useFormik({
     initialValues: {
       regNumber: "",
@@ -13,7 +15,7 @@ const AddCar = ({ setGarage, handleEnd }) => {
     },
     onSubmit: (values, tools) => {
       const fetchedCars = JSON.parse(localStorage.getItem("carDetails"));
-      const newCarDetails = [...fetchedCars, { ...values, checkIn }];
+      const newCarDetails = [...fetchedCars, { ...values, checkedIn }];
       localStorage.setItem("carDetails", JSON.stringify(newCarDetails));
       setGarage(newCarDetails);
       tools.resetForm();
